@@ -90,20 +90,20 @@ function AddModal({ onClose, onAdd }) {
   const nombre = selected.join(' + ')
   const submit = () => { if (!selected.length) return; onAdd({id:nextId++,nombre,cancion,artista,yt,done:false}); onClose() }
 
-  const inS = { width:'100%',padding:'13px 16px',borderRadius:12,border:'1.5px solid rgba(140,74,90,0.25)',background:'rgba(255,255,255,0.75)',color:'#3d1f28',fontSize:'17px',minHeight:'48px',fontFamily:"'Lato',sans-serif" }
+  const inS = { width:'100%',padding:'13px 16px',borderRadius:12,border:'1.5px solid rgba(140,74,90,0.25)',background:'rgba(255,255,255,0.75)',color:'#3d1f28',fontSize:'17px',minHeight:'48px',fontFamily:"'Lato',sans-serif",boxSizing:'border-box' }
   const lbS = { color:'#8c4a5a',fontSize:'13px',fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase' }
   const btn = { flex:1,minHeight:'50px',borderRadius:12,fontSize:'17px',fontWeight:600,cursor:'pointer',fontFamily:"'Lato',sans-serif" }
 
   return (
     <div onClick={onClose} style={{position:'fixed',inset:0,zIndex:100,background:'rgba(50,15,22,0.28)',backdropFilter:'blur(5px)',display:'flex',alignItems:'flex-end',justifyContent:'center'}}>
-      <div onClick={e=>e.stopPropagation()} style={{width:'100%',maxWidth:'100vw',background:'#f7dde0',borderRadius:'22px 22px 0 0',boxShadow:'0 -6px 32px rgba(100,35,48,0.14)',marginBottom:kbOffset,transition:'margin-bottom 0.15s ease',maxHeight:'88dvh',display:'flex',flexDirection:'column',paddingLeft:'env(safe-area-inset-left)',paddingRight:'env(safe-area-inset-right)',paddingBottom:'env(safe-area-inset-bottom)',boxSizing:'border-box'}}>
+      <div onClick={e=>e.stopPropagation()} style={{width:'100%',maxWidth:'100vw',background:'#f7dde0',borderRadius:'22px 22px 0 0',boxShadow:'0 -6px 32px rgba(100,35,48,0.14)',marginBottom:kbOffset,transition:'margin-bottom 0.15s ease',maxHeight:'88dvh',display:'flex',flexDirection:'column',overflow:'hidden',boxSizing:'border-box'}}>
         <div style={{padding:'14px 0 4px',flexShrink:0}}>
           <div style={{width:36,height:4,borderRadius:99,background:'rgba(140,74,90,0.3)',margin:'0 auto'}}/>
         </div>
         <div style={{padding:'8px 24px 14px',flexShrink:0,borderBottom:'1px solid rgba(140,74,90,0.1)'}}>
           <h2 style={{fontFamily:"'Playfair Display',serif",color:'#5e1e2e',fontSize:'22px',fontWeight:700,textAlign:'center'}}>Add a Song 🎤</h2>
         </div>
-        <div style={{overflowY:'auto',flex:1,padding:'20px 24px 48px',WebkitOverflowScrolling:'touch'}}>
+        <div style={{overflowY:'auto',overflowX:'hidden',flex:1,padding:'20px 24px 48px',WebkitOverflowScrolling:'touch',boxSizing:'border-box',width:'100%'}}>
           <div style={{display:'flex',flexDirection:'column',gap:16}}>
             <div style={{display:'flex',flexDirection:'column',gap:10}}>
               <span style={lbS}>Who's singing?</span>
@@ -153,6 +153,38 @@ export default function App() {
   const deleteRow  = id => { setRows(p=>p.filter(r=>r.id!==id)); setConfirmDel(null); if(expandedId===id) setExpandedId(null) }
   const addRow     = row => setRows(p=>[...p,row])
 
+  const shuffleRows = () => {
+    setRows(prev => {
+      // Separate done and undone rows
+      const done   = prev.filter(r => r.done)
+      const undone = prev.filter(r => !r.done)
+
+      // Smart shuffle: no same nombre back-to-back
+      const shuffle = arr => {
+        const a = [...arr]
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]]
+        }
+        return a
+      }
+
+      let attempts = 0
+      let shuffled = shuffle(undone)
+      while (attempts < 50) {
+        let ok = true
+        for (let i = 1; i < shuffled.length; i++) {
+          if (shuffled[i].nombre && shuffled[i].nombre === shuffled[i-1].nombre) { ok = false; break }
+        }
+        if (ok) break
+        shuffled = shuffle(undone)
+        attempts++
+      }
+
+      return [...done, ...shuffled]
+    })
+  }
+
   const handleDelete = (e,id) => {
     e.stopPropagation()
     deleteRow(id)
@@ -180,6 +212,9 @@ export default function App() {
               <div style={{height:'100%',borderRadius:99,background:'#8c4a5a',opacity:0.65,width:`${(doneCount/Math.max(rows.length,1))*100}%`,transition:'width 0.5s'}}/>
             </div>
           </div>
+          <button onClick={shuffleRows} style={{marginTop:14,display:'flex',alignItems:'center',gap:6,background:'transparent',border:'1.5px solid rgba(140,74,90,0.3)',borderRadius:20,padding:'7px 18px',color:'#8c4a5a',fontSize:'14px',fontWeight:600,cursor:'pointer',fontFamily:"'Lato',sans-serif",margin:'14px auto 0'}}>
+            🔀 Shuffle Order
+          </button>
         </div>
 
         {/* Col headers */}
@@ -198,7 +233,7 @@ export default function App() {
                   onMouseEnter={e=>{e.currentTarget.style.color='#c03050'}}
                   onMouseLeave={e=>{e.currentTarget.style.color='rgba(140,74,90,0.28)'}}
                   style={{background:'none',border:'none',padding:0,color:'rgba(140,74,90,0.28)',fontSize:'22px',fontWeight:300,lineHeight:1,cursor:'pointer',transition:'color 0.15s',minHeight:'44px',display:'flex',alignItems:'center',justifyContent:'center'}}>×</button>
-                <div style={{padding:'5px 12px',borderRadius:20,background:nc.bg,border:`1px solid ${nc.border}`,color:nc.text,fontSize:'14px',fontWeight:700,whiteSpace:'normal',wordBreak:'break-word',textDecoration:row.done?'line-through':'none',display:'inline-flex',alignSelf:'flex-start',width:'fit-content'}}>
+                <div style={{padding:'5px 12px',borderRadius:20,background:nc.bg,border:`1px solid ${nc.border}`,color:nc.text,fontSize:'14px',fontWeight:700,whiteSpace:'normal',wordBreak:'break-word',textDecoration:row.done?'line-through':'none',width:'fit-content',alignSelf:'center'}}>
                   {isCurrent&&<span style={{marginRight:4,fontSize:'10px'}}>▶</span>}{row.nombre||'—'}
                 </div>
                 <div style={{color:row.cancion?'#2a0e18':'rgba(50,15,22,0.42)',fontSize:'17px',fontWeight:row.cancion?700:400,fontStyle:row.cancion?'normal':'italic',whiteSpace:'normal',wordBreak:'break-word'}}>{row.cancion||'add song'}</div>
