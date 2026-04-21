@@ -297,7 +297,7 @@ export default function App() {
                   <div style={{display:'flex',flexDirection:'column',gap:14,width:'100%',maxWidth:'100%',minWidth:0,boxSizing:'border-box'}}>
                     <label style={rowFieldWrap}><span style={lbT}>🎵 Canción</span><textarea autoFocus value={row.cancion} onChange={e=>update(row.id,'cancion',e.target.value)} placeholder="Nombre de la canción…" rows={2} style={fieldS}/></label>
                     <label style={rowFieldWrap}><span style={lbT}>🎤 Artista</span><textarea value={row.artista} onChange={e=>update(row.id,'artista',e.target.value)} placeholder="Nombre del artista…" rows={2} style={fieldS}/></label>
-                    <label style={rowFieldWrap}><span style={lbT}>🔗 YouTube Link</span><input value={row.yt} onChange={e=>update(row.id,'yt',e.target.value)} placeholder="https://youtu.be/…" style={fieldS}/></label>
+                    <label style={rowFieldWrap}><span style={lbT}>🔗 YouTube Enlace</span><input value={row.yt} onChange={e=>update(row.id,'yt',e.target.value)} placeholder="https://youtu.be/…" style={fieldS}/></label>
                     <div style={{display:'flex',gap:10,marginTop:4}}>
                       <button onClick={()=>setExpandedId(null)} style={{flex:1,minHeight:'50px',borderRadius:10,border:'1.5px solid rgba(140,74,90,0.25)',background:'transparent',color:'#8c4a5a',fontSize:'17px',fontWeight:600,cursor:'pointer',fontFamily:"'Lato',sans-serif"}}>Close</button>
                       <button onClick={()=>setExpandedId(null)} style={{flex:1,minHeight:'50px',borderRadius:10,border:'1.5px solid rgba(90,142,98,0.4)',background:'transparent',color:'#3a6e42',fontSize:'17px',fontWeight:600,cursor:'pointer',fontFamily:"'Lato',sans-serif"}}>Done 🎤</button>
