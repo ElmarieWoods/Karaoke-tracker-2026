@@ -245,8 +245,8 @@ export default function App() {
               </div>
               <div style={{height:1,background:'rgba(140,74,90,0.1)',margin:`0 ${G}px`}}/>
               {isExpanded&&(
-                <div onClick={e=>e.stopPropagation()} style={{padding:`16px ${G}px 20px`,background:'rgba(255,255,255,0.3)'}}>
-                  <div style={{display:'flex',flexDirection:'column',gap:14}}>
+                <div onClick={e=>e.stopPropagation()} style={{padding:`16px ${G}px 20px`,background:'rgba(255,255,255,0.3)',overflow:'hidden',boxSizing:'border-box',width:'100%'}}>
+                  <div style={{display:'flex',flexDirection:'column',gap:14,overflowX:'hidden',width:'100%'}}>
                     <label style={{display:'flex',flexDirection:'column',gap:6}}><span style={lbT}>🎵 Canción</span><textarea autoFocus value={row.cancion} onChange={e=>update(row.id,'cancion',e.target.value)} placeholder="Nombre de la canción…" rows={2} style={fieldS}/></label>
                     <label style={{display:'flex',flexDirection:'column',gap:6}}><span style={lbT}>🎤 Artista</span><textarea value={row.artista} onChange={e=>update(row.id,'artista',e.target.value)} placeholder="Nombre del artista…" rows={2} style={fieldS}/></label>
                     <label style={{display:'flex',flexDirection:'column',gap:6}}><span style={lbT}>🔗 YouTube Link</span><input value={row.yt} onChange={e=>update(row.id,'yt',e.target.value)} placeholder="https://youtu.be/…" style={fieldS}/></label>
