@@ -1,31 +1,20 @@
 import { useState, useEffect, useRef } from 'react'
+import { createClient } from '@supabase/supabase-js'
 
-const STORAGE_KEY = 'karaoke-houston-v9'
+// ────────────────────────────────────────────────────────────────
+// Supabase client
+// Put these in a .env.local at the project root:
+//   VITE_SUPABASE_URL=https://vpqnayujkznutqytdvhy.supabase.co
+//   VITE_SUPABASE_ANON_KEY=sb_publishable_1Q1NQBzA04p5p1p46MTlRg_qo-8iDs4
+// (If this is a Next.js project, rename both to NEXT_PUBLIC_* and use
+//  process.env.NEXT_PUBLIC_SUPABASE_URL etc.)
+// ────────────────────────────────────────────────────────────────
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
+)
+
 const NAMES = ['Ivy', 'Wanda', 'Ale', 'Caro', 'Emy']
-
-const INITIAL_ROWS = [
-  { id:1,  nombre:'Ivy',   cancion:'', artista:'', yt:'', done:false },
-  { id:2,  nombre:'Wanda', cancion:'', artista:'', yt:'', done:false },
-  { id:3,  nombre:'Ale',   cancion:'', artista:'', yt:'', done:false },
-  { id:4,  nombre:'Caro',  cancion:'', artista:'', yt:'', done:false },
-  { id:5,  nombre:'Emy',   cancion:'Loba', artista:'Shakira', yt:'https://youtu.be/7VNJWoVgQVk?si=06mPsh5A4OipKOp0', done:false },
-  { id:6,  nombre:'Ivy',   cancion:'', artista:'', yt:'', done:false },
-  { id:7,  nombre:'Wanda', cancion:'', artista:'', yt:'', done:false },
-  { id:8,  nombre:'Ale',   cancion:'', artista:'', yt:'', done:false },
-  { id:9,  nombre:'Caro',  cancion:'', artista:'', yt:'', done:false },
-  { id:10, nombre:'Emy',   cancion:'', artista:'', yt:'', done:false },
-  { id:11, nombre:'Ivy',   cancion:'', artista:'', yt:'', done:false },
-  { id:12, nombre:'Wanda', cancion:'', artista:'', yt:'', done:false },
-  { id:13, nombre:'Ale',   cancion:'', artista:'', yt:'', done:false },
-  { id:14, nombre:'Caro',  cancion:'', artista:'', yt:'', done:false },
-  { id:15, nombre:'Emy',   cancion:'', artista:'', yt:'', done:false },
-  { id:16, nombre:'Ivy',   cancion:'', artista:'', yt:'', done:false },
-  { id:17, nombre:'Wanda', cancion:'', artista:'', yt:'', done:false },
-  { id:18, nombre:'Ale',   cancion:'', artista:'', yt:'', done:false },
-  { id:19, nombre:'Caro',  cancion:'', artista:'', yt:'', done:false },
-  { id:20, nombre:'Emy',   cancion:'', artista:'', yt:'', done:false },
-  { id:21, nombre:'',      cancion:'', artista:'', yt:'', done:false },
-]
 
 const NC = {
   Ivy:   { bg:'rgba(160,110,185,0.14)', border:'#a06eb9', text:'#52336e' },
@@ -35,8 +24,6 @@ const NC = {
   Emy:   { bg:'rgba(100,130,185,0.14)', border:'#6482b9', text:'#1e3872' },
   '':    { bg:'rgba(140,74,90,0.07)',   border:'rgba(140,74,90,0.25)', text:'#6a3040' },
 }
-
-let nextId = 500
 
 function FlowerCorner({ pos }) {
   const isRight  = pos.includes('right')
@@ -76,6 +63,7 @@ function AddModal({ onClose, onAdd }) {
   const [artista,  setArtista]  = useState('')
   const [yt,       setYt]       = useState('')
   const [kbOffset, setKbOffset] = useState(0)
+  const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
     const vv = window.visualViewport
@@ -88,31 +76,23 @@ function AddModal({ onClose, onAdd }) {
 
   const toggle = n => setSelected(p => p.includes(n) ? p.filter(x=>x!==n) : [...p,n])
   const nombre = selected.join(' + ')
-  const submit = () => { if (!selected.length) return; onAdd({id:nextId++,nombre,cancion,artista,yt,done:false}); onClose() }
+  const submit = async () => {
+    if (!selected.length || submitting) return
+    setSubmitting(true)
+    await onAdd({ nombre, cancion, artista, yt, done:false })
+    setSubmitting(false)
+    onClose()
+  }
 
-  // 🔧 FIX: added maxWidth, WebkitAppearance/appearance reset, outline, margin, display block
   const inS = {
-    width:'100%',
-    maxWidth:'100%',
-    padding:'13px 16px',
-    borderRadius:12,
-    border:'1.5px solid rgba(140,74,90,0.25)',
-    background:'rgba(255,255,255,0.75)',
-    color:'#3d1f28',
-    fontSize:'17px',
-    minHeight:'48px',
-    fontFamily:"'Lato',sans-serif",
-    boxSizing:'border-box',
-    WebkitAppearance:'none',
-    appearance:'none',
-    outline:'none',
-    margin:0,
-    display:'block'
+    width:'100%',maxWidth:'100%',padding:'13px 16px',borderRadius:12,
+    border:'1.5px solid rgba(140,74,90,0.25)',background:'rgba(255,255,255,0.75)',
+    color:'#3d1f28',fontSize:'17px',minHeight:'48px',fontFamily:"'Lato',sans-serif",
+    boxSizing:'border-box',WebkitAppearance:'none',appearance:'none',outline:'none',
+    margin:0,display:'block'
   }
   const lbS = { color:'#8c4a5a',fontSize:'13px',fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase' }
   const btn = { flex:1,minHeight:'50px',borderRadius:12,fontSize:'17px',fontWeight:600,cursor:'pointer',fontFamily:"'Lato',sans-serif" }
-
-  // 🔧 FIX: shared style for the flex column wrappers around each input — width:100%, minWidth:0, box-sizing
   const fieldWrap = { display:'flex',flexDirection:'column',gap:6,width:'100%',minWidth:0,boxSizing:'border-box' }
 
   return (
@@ -122,13 +102,12 @@ function AddModal({ onClose, onAdd }) {
           <div style={{width:36,height:4,borderRadius:99,background:'rgba(140,74,90,0.3)',margin:'0 auto'}}/>
         </div>
         <div style={{padding:'8px 24px 14px',flexShrink:0,borderBottom:'1px solid rgba(140,74,90,0.1)'}}>
-          <h2 style={{fontFamily:"'Playfair Display',serif",color:'#5e1e2e',fontSize:'22px',fontWeight:700,textAlign:'center'}}>Añada una canción 🎤</h2>
+          <h2 style={{fontFamily:"'Playfair Display',serif",color:'#5e1e2e',fontSize:'22px',fontWeight:700,textAlign:'center'}}>Add a Song 🎤</h2>
         </div>
         <div style={{overflowY:'auto',overflowX:'hidden',flex:1,padding:'20px 24px 48px',WebkitOverflowScrolling:'touch',boxSizing:'border-box',width:'100%'}}>
-          {/* 🔧 FIX: outer flex column now has width:100%, minWidth:0, box-sizing */}
           <div style={{display:'flex',flexDirection:'column',gap:16,width:'100%',minWidth:0,boxSizing:'border-box'}}>
             <div style={fieldWrap}>
-              <span style={lbS}>¿Quién cantará?</span>
+              <span style={lbS}>Who's singing?</span>
               <div style={{display:'flex',flexWrap:'wrap',gap:8}}>
                 {NAMES.map(name => {
                   const nc = NC[name]; const on = selected.includes(name)
@@ -146,12 +125,12 @@ function AddModal({ onClose, onAdd }) {
               <input value={artista} onChange={e=>setArtista(e.target.value)} placeholder="Nombre del artista…" style={inS}/>
             </div>
             <div style={fieldWrap}>
-              <span style={lbS}>YouTube Enlace</span>
+              <span style={lbS}>YouTube Link</span>
               <input value={yt} onChange={e=>setYt(e.target.value)} placeholder="https://youtu.be/…" style={inS}/>
             </div>
             <div style={{display:'flex',gap:10,marginTop:4}}>
-              <button onClick={onClose} style={{...btn,border:'1.5px solid rgba(140,74,90,0.28)',background:'transparent',color:'#8c4a5a'}}>Cancelar</button>
-              <button onClick={submit} style={{...btn,flex:2,border:'none',background:selected.length?'#8c4a5a':'rgba(140,74,90,0.3)',color:'#f7dde0',cursor:selected.length?'pointer':'not-allowed',boxShadow:selected.length?'0 4px 14px rgba(140,74,90,0.3)':'none'}}>Añadir a lista ✦</button>
+              <button onClick={onClose} style={{...btn,border:'1.5px solid rgba(140,74,90,0.28)',background:'transparent',color:'#8c4a5a'}}>Cancel</button>
+              <button onClick={submit} disabled={!selected.length||submitting} style={{...btn,flex:2,border:'none',background:selected.length&&!submitting?'#8c4a5a':'rgba(140,74,90,0.3)',color:'#f7dde0',cursor:selected.length&&!submitting?'pointer':'not-allowed',boxShadow:selected.length&&!submitting?'0 4px 14px rgba(140,74,90,0.3)':'none'}}>{submitting?'Adding…':'Add to Playlist ✦'}</button>
             </div>
           </div>
         </div>
@@ -161,85 +140,149 @@ function AddModal({ onClose, onAdd }) {
 }
 
 export default function App() {
-  const saved = localStorage.getItem(STORAGE_KEY)
-  const [rows,       setRows]       = useState(saved ? JSON.parse(saved) : INITIAL_ROWS)
+  const [rows,       setRows]       = useState([])
+  const [loading,    setLoading]    = useState(true)
   const [expandedId, setExpandedId] = useState(null)
   const [showAdd,    setShowAdd]    = useState(false)
 
-  useEffect(() => { localStorage.setItem(STORAGE_KEY, JSON.stringify(rows)) }, [rows])
+  // Refs for conflict-safe concurrent editing
+  const updateTimers = useRef({})        // { "<id>-<field>": timeoutId }
+  const expandedRef  = useRef(null)      // latest expandedId for the realtime handler
+
+  useEffect(() => { expandedRef.current = expandedId }, [expandedId])
+
+  // ─── Initial load + realtime subscription ─────────────────────
+  useEffect(() => {
+    let mounted = true
+
+    supabase.from('songs').select('*').order('position').then(({ data, error }) => {
+      if (!mounted) return
+      if (error) console.error('[songs] load error:', error)
+      else setRows(data || [])
+      setLoading(false)
+    })
+
+    const channel = supabase
+      .channel('songs-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'songs' }, payload => {
+        setRows(prev => {
+          if (payload.eventType === 'INSERT') {
+            if (prev.some(r => r.id === payload.new.id)) return prev
+            return [...prev, payload.new].sort((a,b) => a.position - b.position)
+          }
+          if (payload.eventType === 'UPDATE') {
+            // Skip updates for a row that's currently open in the editor
+            // locally — prevents someone else's edit from stomping what
+            // you're typing. Your next close/open will resync.
+            if (expandedRef.current === payload.new.id) return prev
+            return prev.map(r => r.id === payload.new.id ? payload.new : r)
+          }
+          if (payload.eventType === 'DELETE') {
+            return prev.filter(r => r.id !== payload.old.id)
+          }
+          return prev
+        })
+      })
+      .subscribe()
+
+    return () => {
+      mounted = false
+      supabase.removeChannel(channel)
+      Object.values(updateTimers.current).forEach(clearTimeout)
+    }
+  }, [])
 
   const currentIdx = rows.findIndex(r => !r.done)
   const doneCount  = rows.filter(r => r.done).length
-  const update     = (id,f,v) => setRows(p=>p.map(r=>r.id===id?{...r,[f]:v}:r))
-  const toggleDone = id => setRows(p=>p.map(r=>r.id===id?{...r,done:!r.done}:r))
-  const deleteRow  = id => { setRows(p=>p.filter(r=>r.id!==id)); if(expandedId===id) setExpandedId(null) }
-  const addRow     = row => setRows(p=>[...p,row])
 
-  const shuffleRows = () => {
-    setRows(prev => {
-      const done   = prev.filter(r => r.done)
-      const undone = prev.filter(r => !r.done)
-
-      const shuffle = arr => {
-        const a = [...arr]
-        for (let i = a.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [a[i], a[j]] = [a[j], a[i]]
-        }
-        return a
-      }
-
-      let attempts = 0
-      let shuffled = shuffle(undone)
-      while (attempts < 50) {
-        let ok = true
-        for (let i = 1; i < shuffled.length; i++) {
-          if (shuffled[i].nombre && shuffled[i].nombre === shuffled[i-1].nombre) { ok = false; break }
-        }
-        if (ok) break
-        shuffled = shuffle(undone)
-        attempts++
-      }
-
-      return [...done, ...shuffled]
-    })
+  // ─── Mutations (optimistic local + persist to Supabase) ────────
+  const update = (id, field, value) => {
+    setRows(prev => prev.map(r => r.id === id ? { ...r, [field]: value } : r))
+    const k = `${id}-${field}`
+    clearTimeout(updateTimers.current[k])
+    updateTimers.current[k] = setTimeout(async () => {
+      const { error } = await supabase.from('songs').update({ [field]: value }).eq('id', id)
+      if (error) console.error('[songs] update error:', error)
+    }, 500)
   }
 
-  const handleDelete = (e,id) => {
-    e.stopPropagation()
-    deleteRow(id)
+  const toggleDone = async (id) => {
+    const row = rows.find(r => r.id === id)
+    if (!row) return
+    const next = !row.done
+    setRows(prev => prev.map(r => r.id === id ? { ...r, done: next } : r))
+    const { error } = await supabase.from('songs').update({ done: next }).eq('id', id)
+    if (error) console.error('[songs] toggle error:', error)
   }
 
-  const G = 16
-  // 🔧 FIX: nombre column is now fixed (was `auto`) so every row's grid computes
-  // the same column widths — attributes now align perfectly with their headers.
+  const deleteRow = async (id) => {
+    setRows(prev => prev.filter(r => r.id !== id))
+    if (expandedId === id) setExpandedId(null)
+    const { error } = await supabase.from('songs').delete().eq('id', id)
+    if (error) console.error('[songs] delete error:', error)
+  }
+
+  const addRow = async (row) => {
+    const maxPos = rows.length ? Math.max(...rows.map(r => r.position || 0)) : 0
+    const { error } = await supabase
+      .from('songs')
+      .insert({ ...row, position: maxPos + 1 })
+    if (error) console.error('[songs] add error:', error)
+    // realtime subscription will append the row to state
+  }
+
+  const shuffleRows = async () => {
+    const done   = rows.filter(r => r.done)
+    const undone = rows.filter(r => !r.done)
+
+    const shuffle = arr => {
+      const a = [...arr]
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]]
+      }
+      return a
+    }
+
+    let attempts = 0
+    let shuffled = shuffle(undone)
+    while (attempts < 50) {
+      let ok = true
+      for (let i = 1; i < shuffled.length; i++) {
+        if (shuffled[i].nombre && shuffled[i].nombre === shuffled[i-1].nombre) { ok = false; break }
+      }
+      if (ok) break
+      shuffled = shuffle(undone)
+      attempts++
+    }
+
+    const reordered = [...done, ...shuffled].map((r,i) => ({ ...r, position: i + 1 }))
+    setRows(reordered)
+
+    // Persist new positions (one UPDATE per row; fine for ~20 rows)
+    const results = await Promise.all(
+      reordered.map(r =>
+        supabase.from('songs').update({ position: r.position }).eq('id', r.id)
+      )
+    )
+    const err = results.find(r => r.error)
+    if (err) console.error('[songs] shuffle error:', err.error)
+  }
+
+  const handleDelete = (e,id) => { e.stopPropagation(); deleteRow(id) }
+
+  const G    = 16
   const GRID = '28px 80px 1fr 1fr 44px 44px'
   const GAP  = 10
 
-  // 🔧 FIX: fieldS now has maxWidth, WebkitAppearance/appearance reset, outline, margin, display block, resize
   const fieldS = {
-    width:'100%',
-    maxWidth:'100%',
-    padding:'12px 14px',
-    borderRadius:10,
-    border:'1.5px solid rgba(140,74,90,0.2)',
-    background:'rgba(255,255,255,0.6)',
-    color:'#3d1f28',
-    fontSize:'17px',
-    lineHeight:1.5,
-    minHeight:'48px',
-    fontFamily:"'Lato',sans-serif",
-    boxSizing:'border-box',
-    WebkitAppearance:'none',
-    appearance:'none',
-    outline:'none',
-    margin:0,
-    display:'block',
-    resize:'vertical'
+    width:'100%',maxWidth:'100%',padding:'12px 14px',borderRadius:10,
+    border:'1.5px solid rgba(140,74,90,0.2)',background:'rgba(255,255,255,0.6)',
+    color:'#3d1f28',fontSize:'17px',lineHeight:1.5,minHeight:'48px',
+    fontFamily:"'Lato',sans-serif",boxSizing:'border-box',WebkitAppearance:'none',
+    appearance:'none',outline:'none',margin:0,display:'block',resize:'vertical'
   }
   const lbT = {color:'#8c4a5a',fontSize:'13px',fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase'}
-
-  // 🔧 FIX: shared wrapper for row-expansion fields — adds minWidth:0
   const rowFieldWrap = {display:'flex',flexDirection:'column',gap:6,width:'100%',maxWidth:'100%',minWidth:0,boxSizing:'border-box'}
 
   return (
@@ -264,56 +307,66 @@ export default function App() {
           </button>
         </div>
 
-        {/* Col headers */}
-        <div style={{display:'grid',gridTemplateColumns:GRID,gap:GAP,padding:`0 ${G}px 10px`,color:'#6a2a38',fontSize:'12px',fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',borderBottom:'1px solid rgba(140,74,90,0.16)',marginBottom:2}}>
-          <span/><span>Nombre</span><span>Canción</span><span>Artista</span><span style={{textAlign:'center'}}>YT</span><span/>
-        </div>
+        {/* Loading state */}
+        {loading && (
+          <div style={{textAlign:'center',padding:`40px ${G}px`,color:'#8c4a5a',fontStyle:'italic'}}>
+            Loading the playlist…
+          </div>
+        )}
 
-        {/* Rows */}
-        {rows.map((row,idx) => {
-          const isCurrent=idx===currentIdx, isExpanded=expandedId===row.id
-          const nc=NC[row.nombre]||NC['']
-          return (
-            <div key={row.id} style={{background:isCurrent?'rgba(140,74,90,0.06)':'transparent',borderRadius:isCurrent?10:0,opacity:row.done?0.4:1,transition:'opacity 0.2s',overflow:'hidden',width:'100%',maxWidth:'100%',boxSizing:'border-box'}}>
-              <div onClick={()=>setExpandedId(p=>p===row.id?null:row.id)} style={{display:'grid',gridTemplateColumns:GRID,gap:GAP,padding:`14px ${G}px`,minHeight:'60px',alignItems:'center',cursor:'pointer'}}>
-                <button onClick={e=>handleDelete(e,row.id)}
-                  onMouseEnter={e=>{e.currentTarget.style.color='#c03050'}}
-                  onMouseLeave={e=>{e.currentTarget.style.color='rgba(140,74,90,0.28)'}}
-                  style={{background:'none',border:'none',padding:0,color:'rgba(140,74,90,0.28)',fontSize:'22px',fontWeight:300,lineHeight:1,cursor:'pointer',transition:'color 0.15s',minHeight:'44px',display:'flex',alignItems:'center',justifyContent:'center'}}>×</button>
-                <div style={{padding:'5px 12px',borderRadius:20,background:nc.bg,border:`1px solid ${nc.border}`,color:nc.text,fontSize:'14px',fontWeight:700,whiteSpace:'normal',wordBreak:'break-word',textDecoration:row.done?'line-through':'none',width:'fit-content',alignSelf:'center'}}>
-                  {isCurrent&&<span style={{marginRight:4,fontSize:'10px'}}>▶</span>}{row.nombre||'—'}
-                </div>
-                <div style={{color:row.cancion?'#2a0e18':'rgba(50,15,22,0.42)',fontSize:'17px',fontWeight:row.cancion?700:400,fontStyle:row.cancion?'normal':'italic',whiteSpace:'normal',wordBreak:'break-word'}}>{row.cancion||'add song'}</div>
-                <div style={{color:row.artista?'#3d1520':'rgba(50,15,22,0.42)',fontSize:'16px',fontWeight:400,fontStyle:'italic',whiteSpace:'normal',wordBreak:'break-word'}}>{row.artista||'—'}</div>
-                <div style={{display:'flex',alignItems:'center',justifyContent:'center',minHeight:'44px',width:'44px'}}>
-                  {row.yt?<a href={row.yt} target="_blank" rel="noreferrer" onClick={e=>e.stopPropagation()} style={{fontSize:'20px',textDecoration:'none',lineHeight:1}}>🔗</a>:<span style={{color:'rgba(140,74,90,0.2)',fontSize:'18px'}}>🎵</span>}
-                </div>
-                <button onClick={e=>{e.stopPropagation();toggleDone(row.id)}} style={{width:'44px',height:'44px',borderRadius:8,border:`2px solid ${row.done?'#5a8e62':'rgba(140,74,90,0.25)'}`,background:row.done?'rgba(90,142,98,0.12)':'transparent',color:row.done?'#2e6635':'transparent',cursor:'pointer',fontSize:'17px',fontWeight:800,display:'flex',alignItems:'center',justifyContent:'center',transition:'all 0.2s'}}>{row.done?'✓':''}</button>
-              </div>
-              <div style={{height:1,background:'rgba(140,74,90,0.1)',margin:`0 ${G}px`}}/>
-              {isExpanded&&(
-                <div onClick={e=>e.stopPropagation()} style={{padding:`16px ${G}px 20px`,background:'rgba(255,255,255,0.3)',boxSizing:'border-box',width:'100%',maxWidth:'100%',overflow:'hidden',WebkitOverflowScrolling:'touch'}}>
-                  {/* 🔧 FIX: inner flex column has minWidth:0 so inputs can shrink */}
-                  <div style={{display:'flex',flexDirection:'column',gap:14,width:'100%',maxWidth:'100%',minWidth:0,boxSizing:'border-box'}}>
-                    <label style={rowFieldWrap}><span style={lbT}>🎵 Canción</span><textarea autoFocus value={row.cancion} onChange={e=>update(row.id,'cancion',e.target.value)} placeholder="Nombre de la canción…" rows={2} style={fieldS}/></label>
-                    <label style={rowFieldWrap}><span style={lbT}>🎤 Artista</span><textarea value={row.artista} onChange={e=>update(row.id,'artista',e.target.value)} placeholder="Nombre del artista…" rows={2} style={fieldS}/></label>
-                    <label style={rowFieldWrap}><span style={lbT}>🔗 YouTube Enlace</span><input value={row.yt} onChange={e=>update(row.id,'yt',e.target.value)} placeholder="https://youtu.be/…" style={fieldS}/></label>
-                    <div style={{display:'flex',gap:10,marginTop:4}}>
-                      <button onClick={()=>setExpandedId(null)} style={{flex:1,minHeight:'50px',borderRadius:10,border:'1.5px solid rgba(140,74,90,0.25)',background:'transparent',color:'#8c4a5a',fontSize:'17px',fontWeight:600,cursor:'pointer',fontFamily:"'Lato',sans-serif"}}>Close</button>
-                      <button onClick={()=>setExpandedId(null)} style={{flex:1,minHeight:'50px',borderRadius:10,border:'1.5px solid rgba(90,142,98,0.4)',background:'transparent',color:'#3a6e42',fontSize:'17px',fontWeight:600,cursor:'pointer',fontFamily:"'Lato',sans-serif"}}>Done 🎤</button>
-                    </div>
-                  </div>
-                </div>
-              )}
+        {!loading && (
+          <>
+            {/* Col headers */}
+            <div style={{display:'grid',gridTemplateColumns:GRID,gap:GAP,padding:`0 ${G}px 10px`,color:'#6a2a38',fontSize:'12px',fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',borderBottom:'1px solid rgba(140,74,90,0.16)',marginBottom:2}}>
+              <span/><span>Nombre</span><span>Canción</span><span>Artista</span><span style={{textAlign:'center'}}>YT</span><span/>
             </div>
-          )
-        })}
 
-        {/* Legend */}
-        <div style={{display:'flex',flexWrap:'wrap',gap:8,margin:`28px ${G}px 0`,justifyContent:'center'}}>
-          {NAMES.map(name=>{const c=NC[name];return<div key={name} style={{padding:'6px 16px',borderRadius:20,background:c.bg,border:`1px solid ${c.border}`,color:c.text,fontSize:'15px',fontWeight:700}}>{name}</div>})}
-        </div>
-        <p style={{textAlign:'center',marginTop:14,paddingBottom:8,color:'rgba(80,20,35,0.45)',fontSize:'14px',fontStyle:'italic'}}>Toca para expandir · × para eliminar · + para añadir</p>
+            {/* Rows */}
+            {rows.map((row,idx) => {
+              const isCurrent=idx===currentIdx, isExpanded=expandedId===row.id
+              const nc=NC[row.nombre]||NC['']
+              return (
+                <div key={row.id} style={{background:isCurrent?'rgba(140,74,90,0.06)':'transparent',borderRadius:isCurrent?10:0,opacity:row.done?0.4:1,transition:'opacity 0.2s',overflow:'hidden',width:'100%',maxWidth:'100%',boxSizing:'border-box'}}>
+                  <div onClick={()=>setExpandedId(p=>p===row.id?null:row.id)} style={{display:'grid',gridTemplateColumns:GRID,gap:GAP,padding:`14px ${G}px`,minHeight:'60px',alignItems:'center',cursor:'pointer'}}>
+                    <button onClick={e=>handleDelete(e,row.id)}
+                      onMouseEnter={e=>{e.currentTarget.style.color='#c03050'}}
+                      onMouseLeave={e=>{e.currentTarget.style.color='rgba(140,74,90,0.28)'}}
+                      style={{background:'none',border:'none',padding:0,color:'rgba(140,74,90,0.28)',fontSize:'22px',fontWeight:300,lineHeight:1,cursor:'pointer',transition:'color 0.15s',minHeight:'44px',display:'flex',alignItems:'center',justifyContent:'center'}}>×</button>
+                    <div style={{padding:'5px 12px',borderRadius:20,background:nc.bg,border:`1px solid ${nc.border}`,color:nc.text,fontSize:'14px',fontWeight:700,whiteSpace:'normal',wordBreak:'break-word',textDecoration:row.done?'line-through':'none',width:'fit-content',alignSelf:'center'}}>
+                      {isCurrent&&<span style={{marginRight:4,fontSize:'10px'}}>▶</span>}{row.nombre||'—'}
+                    </div>
+                    <div style={{color:row.cancion?'#2a0e18':'rgba(50,15,22,0.42)',fontSize:'17px',fontWeight:row.cancion?700:400,fontStyle:row.cancion?'normal':'italic',whiteSpace:'normal',wordBreak:'break-word'}}>{row.cancion||'add song'}</div>
+                    <div style={{color:row.artista?'#3d1520':'rgba(50,15,22,0.42)',fontSize:'16px',fontWeight:400,fontStyle:'italic',whiteSpace:'normal',wordBreak:'break-word'}}>{row.artista||'—'}</div>
+                    <div style={{display:'flex',alignItems:'center',justifyContent:'center',minHeight:'44px',width:'44px'}}>
+                      {row.yt?<a href={row.yt} target="_blank" rel="noreferrer" onClick={e=>e.stopPropagation()} style={{fontSize:'20px',textDecoration:'none',lineHeight:1}}>🔗</a>:<span style={{color:'rgba(140,74,90,0.2)',fontSize:'18px'}}>🎵</span>}
+                    </div>
+                    <button onClick={e=>{e.stopPropagation();toggleDone(row.id)}} style={{width:'44px',height:'44px',borderRadius:8,border:`2px solid ${row.done?'#5a8e62':'rgba(140,74,90,0.25)'}`,background:row.done?'rgba(90,142,98,0.12)':'transparent',color:row.done?'#2e6635':'transparent',cursor:'pointer',fontSize:'17px',fontWeight:800,display:'flex',alignItems:'center',justifyContent:'center',transition:'all 0.2s'}}>{row.done?'✓':''}</button>
+                  </div>
+                  <div style={{height:1,background:'rgba(140,74,90,0.1)',margin:`0 ${G}px`}}/>
+                  {isExpanded&&(
+                    <div onClick={e=>e.stopPropagation()} style={{padding:`16px ${G}px 20px`,background:'rgba(255,255,255,0.3)',boxSizing:'border-box',width:'100%',maxWidth:'100%',overflow:'hidden',WebkitOverflowScrolling:'touch'}}>
+                      <div style={{display:'flex',flexDirection:'column',gap:14,width:'100%',maxWidth:'100%',minWidth:0,boxSizing:'border-box'}}>
+                        <label style={rowFieldWrap}><span style={lbT}>🎵 Canción</span><textarea autoFocus value={row.cancion} onChange={e=>update(row.id,'cancion',e.target.value)} placeholder="Nombre de la canción…" rows={2} style={fieldS}/></label>
+                        <label style={rowFieldWrap}><span style={lbT}>🎤 Artista</span><textarea value={row.artista} onChange={e=>update(row.id,'artista',e.target.value)} placeholder="Nombre del artista…" rows={2} style={fieldS}/></label>
+                        <label style={rowFieldWrap}><span style={lbT}>🔗 YouTube Enlace</span><input value={row.yt} onChange={e=>update(row.id,'yt',e.target.value)} placeholder="https://youtu.be/…" style={fieldS}/></label>
+                        <div style={{display:'flex',gap:10,marginTop:4}}>
+                          <button onClick={()=>setExpandedId(null)} style={{flex:1,minHeight:'50px',borderRadius:10,border:'1.5px solid rgba(140,74,90,0.25)',background:'transparent',color:'#8c4a5a',fontSize:'17px',fontWeight:600,cursor:'pointer',fontFamily:"'Lato',sans-serif"}}>Close</button>
+                          <button onClick={()=>setExpandedId(null)} style={{flex:1,minHeight:'50px',borderRadius:10,border:'1.5px solid rgba(90,142,98,0.4)',background:'transparent',color:'#3a6e42',fontSize:'17px',fontWeight:600,cursor:'pointer',fontFamily:"'Lato',sans-serif"}}>Done 🎤</button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+
+            {/* Legend */}
+            <div style={{display:'flex',flexWrap:'wrap',gap:8,margin:`28px ${G}px 0`,justifyContent:'center'}}>
+              {NAMES.map(name=>{const c=NC[name];return<div key={name} style={{padding:'6px 16px',borderRadius:20,background:c.bg,border:`1px solid ${c.border}`,color:c.text,fontSize:'15px',fontWeight:700}}>{name}</div>})}
+            </div>
+            <p style={{textAlign:'center',marginTop:14,paddingBottom:8,color:'rgba(80,20,35,0.45)',fontSize:'14px',fontStyle:'italic'}}>Toca para expandir · × para eliminar · + para añadir</p>
+          </>
+        )}
       </div>
 
       {/* FAB — hide when a row is expanded */}
