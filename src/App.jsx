@@ -245,7 +245,7 @@ export default function App() {
               </div>
               <div style={{height:1,background:'rgba(140,74,90,0.1)',margin:`0 ${G}px`}}/>
               {isExpanded&&(
-                <div onClick={e=>e.stopPropagation()} style={{padding:`16px ${G}px 20px`,background:'rgba(255,255,255,0.3)',boxSizing:'border-box',width:'100%',maxWidth:'100%',overflow:'hidden'}}>
+                <div onClick={e=>e.stopPropagation()} style={{padding:`16px ${G}px 20px`,background:'rgba(255,255,255,0.3)',boxSizing:'border-box',width:'100%',maxWidth:'100%',overflow:'hidden',WebkitOverflowScrolling:'touch'}}>
                   <div style={{display:'flex',flexDirection:'column',gap:14,width:'100%',maxWidth:'100%',boxSizing:'border-box'}}>
                     <label style={{display:'flex',flexDirection:'column',gap:6,width:'100%',maxWidth:'100%',boxSizing:'border-box'}}><span style={lbT}>🎵 Canción</span><textarea autoFocus value={row.cancion} onChange={e=>update(row.id,'cancion',e.target.value)} placeholder="Nombre de la canción…" rows={2} style={fieldS}/></label>
                     <label style={{display:'flex',flexDirection:'column',gap:6,width:'100%',maxWidth:'100%',boxSizing:'border-box'}}><span style={lbT}>🎤 Artista</span><textarea value={row.artista} onChange={e=>update(row.id,'artista',e.target.value)} placeholder="Nombre del artista…" rows={2} style={fieldS}/></label>
@@ -269,7 +269,7 @@ export default function App() {
       </div>
 
       {/* FAB — hide when a row is expanded */}
-      <div style={{position:'fixed',bottom:50,left:0,right:0,display:'flex',justifyContent:'center',zIndex:50,pointerEvents:'none',opacity:expandedId?0:1,transition:'opacity 0.2s',pointerEvents:expandedId?'none':'none'}}>
+      <div style={{position:'fixed',bottom:50,left:0,right:0,display:'flex',justifyContent:'center',zIndex:50,pointerEvents:'none',opacity:expandedId?0:1,transition:'opacity 0.2s',visibility:expandedId?'hidden':'visible'}}>
         <button onClick={()=>setShowAdd(true)}
           onMouseEnter={e=>e.currentTarget.style.transform='scale(1.1)'}
           onMouseLeave={e=>e.currentTarget.style.transform='scale(1)'}
