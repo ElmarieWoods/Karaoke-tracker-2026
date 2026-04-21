@@ -297,7 +297,7 @@ export default function App() {
                     <label style={rowFieldWrap}><span style={lbT}>🔗 YouTube Link</span><input value={row.yt} onChange={e=>update(row.id,'yt',e.target.value)} placeholder="https://youtu.be/…" style={fieldS}/></label>
                     <div style={{display:'flex',gap:10,marginTop:4}}>
                       <button onClick={()=>setExpandedId(null)} style={{flex:1,minHeight:'50px',borderRadius:10,border:'1.5px solid rgba(140,74,90,0.25)',background:'transparent',color:'#8c4a5a',fontSize:'17px',fontWeight:600,cursor:'pointer',fontFamily:"'Lato',sans-serif"}}>Close</button>
-                      <button onClick={()=>{toggleDone(row.id);setExpandedId(null)}} style={{flex:1,minHeight:'50px',borderRadius:10,border:`1.5px solid ${row.done?'#5a8e62':'rgba(90,142,98,0.4)'}`,background:row.done?'rgba(90,142,98,0.12)':'transparent',color:row.done?'#2e6635':'#3a6e42',fontSize:'17px',fontWeight:600,cursor:'pointer',fontFamily:"'Lato',sans-serif"}}>{row.done?'↩ Unmark':'Mark as sung 🎤'}</button>
+                      <button onClick={()=>setExpandedId(null)} style={{flex:1,minHeight:'50px',borderRadius:10,border:'1.5px solid rgba(90,142,98,0.4)',background:'transparent',color:'#3a6e42',fontSize:'17px',fontWeight:600,cursor:'pointer',fontFamily:"'Lato',sans-serif"}}>Done 🎤</button>
                     </div>
                   </div>
                 </div>
