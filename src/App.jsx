@@ -96,7 +96,7 @@ function AddModal({ onClose, onAdd }) {
 
   return (
     <div onClick={onClose} style={{position:'fixed',inset:0,zIndex:100,background:'rgba(50,15,22,0.28)',backdropFilter:'blur(5px)',display:'flex',alignItems:'flex-end',justifyContent:'center'}}>
-      <div onClick={e=>e.stopPropagation()} style={{width:'100%',maxWidth:560,background:'#f7dde0',borderRadius:'22px 22px 0 0',boxShadow:'0 -6px 32px rgba(100,35,48,0.14)',marginBottom:kbOffset,transition:'margin-bottom 0.15s ease',maxHeight:'88vh',display:'flex',flexDirection:'column'}}>
+      <div onClick={e=>e.stopPropagation()} style={{width:'100%',maxWidth:'100vw',background:'#f7dde0',borderRadius:'22px 22px 0 0',boxShadow:'0 -6px 32px rgba(100,35,48,0.14)',marginBottom:kbOffset,transition:'margin-bottom 0.15s ease',maxHeight:'88dvh',display:'flex',flexDirection:'column',paddingLeft:'env(safe-area-inset-left)',paddingRight:'env(safe-area-inset-right)',paddingBottom:'env(safe-area-inset-bottom)',boxSizing:'border-box'}}>
         <div style={{padding:'14px 0 4px',flexShrink:0}}>
           <div style={{width:36,height:4,borderRadius:99,background:'rgba(140,74,90,0.3)',margin:'0 auto'}}/>
         </div>
@@ -142,9 +142,7 @@ export default function App() {
   const saved = localStorage.getItem(STORAGE_KEY)
   const [rows,       setRows]       = useState(saved ? JSON.parse(saved) : INITIAL_ROWS)
   const [expandedId, setExpandedId] = useState(null)
-  const [confirmDel, setConfirmDel] = useState(null)
   const [showAdd,    setShowAdd]    = useState(false)
-  const timerRef = useRef(null)
 
   useEffect(() => { localStorage.setItem(STORAGE_KEY, JSON.stringify(rows)) }, [rows])
 
@@ -157,14 +155,11 @@ export default function App() {
 
   const handleDelete = (e,id) => {
     e.stopPropagation()
-    if (confirmDel===id) { deleteRow(id); return }
-    setConfirmDel(id)
-    clearTimeout(timerRef.current)
-    timerRef.current = setTimeout(()=>setConfirmDel(null),2500)
+    deleteRow(id)
   }
 
   const G = 16
-  const GRID = '32px 104px 1fr 1fr 44px 44px'
+  const GRID = '32px auto 1fr 1fr 44px 44px'
   const fieldS = {width:'100%',padding:'12px 14px',borderRadius:10,border:'1.5px solid rgba(140,74,90,0.2)',background:'rgba(255,255,255,0.6)',color:'#3d1f28',fontSize:'17px',lineHeight:1.5,minHeight:'48px',fontFamily:"'Lato',sans-serif"}
   const lbT = {color:'#8c4a5a',fontSize:'13px',fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase'}
 
@@ -194,16 +189,16 @@ export default function App() {
 
         {/* Rows */}
         {rows.map((row,idx) => {
-          const isCurrent=idx===currentIdx, isExpanded=expandedId===row.id, isConfirm=confirmDel===row.id
+          const isCurrent=idx===currentIdx, isExpanded=expandedId===row.id
           const nc=NC[row.nombre]||NC['']
           return (
             <div key={row.id} style={{background:isCurrent?'rgba(140,74,90,0.06)':'transparent',borderRadius:isCurrent?10:0,opacity:row.done?0.4:1,transition:'opacity 0.2s'}}>
               <div onClick={()=>setExpandedId(p=>p===row.id?null:row.id)} style={{display:'grid',gridTemplateColumns:GRID,gap:12,padding:`14px ${G}px`,minHeight:'60px',alignItems:'center',cursor:'pointer'}}>
                 <button onClick={e=>handleDelete(e,row.id)}
-                  onMouseEnter={e=>{if(!isConfirm)e.currentTarget.style.color='#c03050'}}
-                  onMouseLeave={e=>{if(!isConfirm)e.currentTarget.style.color='rgba(140,74,90,0.28)'}}
-                  style={{background:'none',border:'none',padding:0,color:isConfirm?'#c03050':'rgba(140,74,90,0.28)',fontSize:'22px',fontWeight:300,lineHeight:1,cursor:'pointer',transition:'color 0.15s',minHeight:'44px',display:'flex',alignItems:'center',justifyContent:'center'}}>×</button>
-                <div style={{padding:'5px 12px',borderRadius:20,background:nc.bg,border:`1px solid ${nc.border}`,color:nc.text,fontSize:'14px',fontWeight:700,whiteSpace:'normal',wordBreak:'break-word',textDecoration:row.done?'line-through':'none'}}>
+                  onMouseEnter={e=>{e.currentTarget.style.color='#c03050'}}
+                  onMouseLeave={e=>{e.currentTarget.style.color='rgba(140,74,90,0.28)'}}
+                  style={{background:'none',border:'none',padding:0,color:'rgba(140,74,90,0.28)',fontSize:'22px',fontWeight:300,lineHeight:1,cursor:'pointer',transition:'color 0.15s',minHeight:'44px',display:'flex',alignItems:'center',justifyContent:'center'}}>×</button>
+                <div style={{padding:'5px 12px',borderRadius:20,background:nc.bg,border:`1px solid ${nc.border}`,color:nc.text,fontSize:'14px',fontWeight:700,whiteSpace:'normal',wordBreak:'break-word',textDecoration:row.done?'line-through':'none',display:'inline-flex',alignSelf:'flex-start',width:'fit-content'}}>
                   {isCurrent&&<span style={{marginRight:4,fontSize:'10px'}}>▶</span>}{row.nombre||'—'}
                 </div>
                 <div style={{color:row.cancion?'#2a0e18':'rgba(50,15,22,0.42)',fontSize:'17px',fontWeight:row.cancion?700:400,fontStyle:row.cancion?'normal':'italic',whiteSpace:'normal',wordBreak:'break-word'}}>{row.cancion||'add song'}</div>
