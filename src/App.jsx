@@ -227,7 +227,7 @@ export default function App() {
           const isCurrent=idx===currentIdx, isExpanded=expandedId===row.id
           const nc=NC[row.nombre]||NC['']
           return (
-            <div key={row.id} style={{background:isCurrent?'rgba(140,74,90,0.06)':'transparent',borderRadius:isCurrent?10:0,opacity:row.done?0.4:1,transition:'opacity 0.2s',overflow:'hidden',width:'100%'}}>
+            <div key={row.id} style={{background:isCurrent?'rgba(140,74,90,0.06)':'transparent',borderRadius:isCurrent?10:0,opacity:row.done?0.4:1,transition:'opacity 0.2s',overflow:'hidden',width:'100%',maxWidth:'100%',boxSizing:'border-box'}}>
               <div onClick={()=>setExpandedId(p=>p===row.id?null:row.id)} style={{display:'grid',gridTemplateColumns:GRID,gap:12,padding:`14px ${G}px`,minHeight:'60px',alignItems:'center',cursor:'pointer'}}>
                 <button onClick={e=>handleDelete(e,row.id)}
                   onMouseEnter={e=>{e.currentTarget.style.color='#c03050'}}
@@ -245,11 +245,11 @@ export default function App() {
               </div>
               <div style={{height:1,background:'rgba(140,74,90,0.1)',margin:`0 ${G}px`}}/>
               {isExpanded&&(
-                <div onClick={e=>e.stopPropagation()} style={{padding:`16px ${G}px 20px`,background:'rgba(255,255,255,0.3)',overflow:'hidden',boxSizing:'border-box',width:'100vw',maxWidth:'100%',position:'relative',left:0,right:0}}>
-                  <div style={{display:'flex',flexDirection:'column',gap:14,overflowX:'hidden',width:'100%'}}>
-                    <label style={{display:'flex',flexDirection:'column',gap:6}}><span style={lbT}>🎵 Canción</span><textarea autoFocus value={row.cancion} onChange={e=>update(row.id,'cancion',e.target.value)} placeholder="Nombre de la canción…" rows={2} style={fieldS}/></label>
-                    <label style={{display:'flex',flexDirection:'column',gap:6}}><span style={lbT}>🎤 Artista</span><textarea value={row.artista} onChange={e=>update(row.id,'artista',e.target.value)} placeholder="Nombre del artista…" rows={2} style={fieldS}/></label>
-                    <label style={{display:'flex',flexDirection:'column',gap:6}}><span style={lbT}>🔗 YouTube Link</span><input value={row.yt} onChange={e=>update(row.id,'yt',e.target.value)} placeholder="https://youtu.be/…" style={fieldS}/></label>
+                <div onClick={e=>e.stopPropagation()} style={{padding:`16px ${G}px 20px`,background:'rgba(255,255,255,0.3)',boxSizing:'border-box',width:'100%',maxWidth:'100%',overflow:'hidden'}}>
+                  <div style={{display:'flex',flexDirection:'column',gap:14,width:'100%',maxWidth:'100%',boxSizing:'border-box'}}>
+                    <label style={{display:'flex',flexDirection:'column',gap:6,width:'100%',maxWidth:'100%',boxSizing:'border-box'}}><span style={lbT}>🎵 Canción</span><textarea autoFocus value={row.cancion} onChange={e=>update(row.id,'cancion',e.target.value)} placeholder="Nombre de la canción…" rows={2} style={fieldS}/></label>
+                    <label style={{display:'flex',flexDirection:'column',gap:6,width:'100%',maxWidth:'100%',boxSizing:'border-box'}}><span style={lbT}>🎤 Artista</span><textarea value={row.artista} onChange={e=>update(row.id,'artista',e.target.value)} placeholder="Nombre del artista…" rows={2} style={fieldS}/></label>
+                    <label style={{display:'flex',flexDirection:'column',gap:6,width:'100%',maxWidth:'100%',boxSizing:'border-box'}}><span style={lbT}>🔗 YouTube Link</span><input value={row.yt} onChange={e=>update(row.id,'yt',e.target.value)} placeholder="https://youtu.be/…" style={fieldS}/></label>
                     <div style={{display:'flex',gap:10,marginTop:4}}>
                       <button onClick={()=>setExpandedId(null)} style={{flex:1,minHeight:'50px',borderRadius:10,border:'1.5px solid rgba(140,74,90,0.25)',background:'transparent',color:'#8c4a5a',fontSize:'17px',fontWeight:600,cursor:'pointer',fontFamily:"'Lato',sans-serif"}}>Close</button>
                       <button onClick={()=>{toggleDone(row.id);setExpandedId(null)}} style={{flex:1,minHeight:'50px',borderRadius:10,border:`1.5px solid ${row.done?'#5a8e62':'rgba(90,142,98,0.4)'}`,background:row.done?'rgba(90,142,98,0.12)':'transparent',color:row.done?'#2e6635':'#3a6e42',fontSize:'17px',fontWeight:600,cursor:'pointer',fontFamily:"'Lato',sans-serif"}}>{row.done?'↩ Unmark':'Mark as sung 🎤'}</button>
