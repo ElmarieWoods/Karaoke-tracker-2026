@@ -32,7 +32,7 @@ const NC = {
   Wanda: { bg:'rgba(185,105,125,0.14)', border:'#b9697d', text:'#72283a' },
   Ale:   { bg:'rgba(95,155,125,0.14)',  border:'#5f9b7d', text:'#1e5e42' },
   Caro:  { bg:'rgba(185,145,75,0.14)',  border:'#b9914b', text:'#624010' },
-  Emy: { bg:'rgba(148,130,210,0.14)', border:'#8b6fd4', text:'#3d2080' },
+  Emy: { bg:'rgba(100,130,185,0.14)', border:'#6482b9', text:'#1e3872' },
   '':    { bg:'rgba(140,74,90,0.07)',   border:'rgba(140,74,90,0.25)', text:'#6a3040' },
 }
 
