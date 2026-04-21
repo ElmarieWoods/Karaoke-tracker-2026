@@ -32,7 +32,7 @@ const NC = {
   Wanda: { bg:'rgba(185,105,125,0.14)', border:'#b9697d', text:'#72283a' },
   Ale:   { bg:'rgba(95,155,125,0.14)',  border:'#5f9b7d', text:'#1e5e42' },
   Caro:  { bg:'rgba(185,145,75,0.14)',  border:'#b9914b', text:'#624010' },
-  Emy: { bg:'rgba(100,130,185,0.14)', border:'#6482b9', text:'#1e3872' },
+  Emy:   { bg:'rgba(100,130,185,0.14)', border:'#6482b9', text:'#1e3872' },
   '':    { bg:'rgba(140,74,90,0.07)',   border:'rgba(140,74,90,0.25)', text:'#6a3040' },
 }
 
@@ -245,7 +245,7 @@ export default function App() {
               </div>
               <div style={{height:1,background:'rgba(140,74,90,0.1)',margin:`0 ${G}px`}}/>
               {isExpanded&&(
-                <div onClick={e=>e.stopPropagation()} style={{padding:`16px ${G}px 20px`,background:'rgba(255,255,255,0.3)',overflow:'hidden',boxSizing:'border-box',width:'100%',maxWidth:'100%',contain:'layout'}}>
+                <div onClick={e=>e.stopPropagation()} style={{padding:`16px ${G}px 20px`,background:'rgba(255,255,255,0.3)',overflow:'hidden',boxSizing:'border-box',width:'100vw',maxWidth:'100%',position:'relative',left:0,right:0}}>
                   <div style={{display:'flex',flexDirection:'column',gap:14,overflowX:'hidden',width:'100%'}}>
                     <label style={{display:'flex',flexDirection:'column',gap:6}}><span style={lbT}>🎵 Canción</span><textarea autoFocus value={row.cancion} onChange={e=>update(row.id,'cancion',e.target.value)} placeholder="Nombre de la canción…" rows={2} style={fieldS}/></label>
                     <label style={{display:'flex',flexDirection:'column',gap:6}}><span style={lbT}>🎤 Artista</span><textarea value={row.artista} onChange={e=>update(row.id,'artista',e.target.value)} placeholder="Nombre del artista…" rows={2} style={fieldS}/></label>
@@ -268,8 +268,8 @@ export default function App() {
         <p style={{textAlign:'center',marginTop:14,paddingBottom:8,color:'rgba(80,20,35,0.45)',fontSize:'14px',fontStyle:'italic'}}>Tap to expand · × to delete · auto-saves</p>
       </div>
 
-      {/* FAB */}
-      <div style={{position:'fixed',bottom:50,left:0,right:0,display:'flex',justifyContent:'center',zIndex:50,pointerEvents:'none'}}>
+      {/* FAB — hide when a row is expanded */}
+      <div style={{position:'fixed',bottom:50,left:0,right:0,display:'flex',justifyContent:'center',zIndex:50,pointerEvents:'none',opacity:expandedId?0:1,transition:'opacity 0.2s',pointerEvents:expandedId?'none':'none'}}>
         <button onClick={()=>setShowAdd(true)}
           onMouseEnter={e=>e.currentTarget.style.transform='scale(1.1)'}
           onMouseLeave={e=>e.currentTarget.style.transform='scale(1)'}
