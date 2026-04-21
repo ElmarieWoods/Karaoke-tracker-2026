@@ -313,7 +313,7 @@ export default function App() {
         <div style={{display:'flex',flexWrap:'wrap',gap:8,margin:`28px ${G}px 0`,justifyContent:'center'}}>
           {NAMES.map(name=>{const c=NC[name];return<div key={name} style={{padding:'6px 16px',borderRadius:20,background:c.bg,border:`1px solid ${c.border}`,color:c.text,fontSize:'15px',fontWeight:700}}>{name}</div>})}
         </div>
-        <p style={{textAlign:'center',marginTop:14,paddingBottom:8,color:'rgba(80,20,35,0.45)',fontSize:'14px',fontStyle:'italic'}}>Tap to expand · × to delete · auto-saves</p>
+        <p style={{textAlign:'center',marginTop:14,paddingBottom:8,color:'rgba(80,20,35,0.45)',fontSize:'14px',fontStyle:'italic'}}>Toca para expandir · × para eliminar · Guardado automático</p>
       </div>
 
       {/* FAB — hide when a row is expanded */}
