@@ -211,7 +211,10 @@ export default function App() {
   }
 
   const G = 16
-  const GRID = '32px auto 1fr 1fr 44px 44px'
+  // 🔧 FIX: nombre column is now fixed (was `auto`) so every row's grid computes
+  // the same column widths — attributes now align perfectly with their headers.
+  const GRID = '28px 80px 1fr 1fr 44px 44px'
+  const GAP  = 10
 
   // 🔧 FIX: fieldS now has maxWidth, WebkitAppearance/appearance reset, outline, margin, display block, resize
   const fieldS = {
@@ -262,7 +265,7 @@ export default function App() {
         </div>
 
         {/* Col headers */}
-        <div style={{display:'grid',gridTemplateColumns:GRID,gap:12,padding:`0 ${G}px 10px`,color:'#6a2a38',fontSize:'12px',fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',borderBottom:'1px solid rgba(140,74,90,0.16)',marginBottom:2}}>
+        <div style={{display:'grid',gridTemplateColumns:GRID,gap:GAP,padding:`0 ${G}px 10px`,color:'#6a2a38',fontSize:'12px',fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',borderBottom:'1px solid rgba(140,74,90,0.16)',marginBottom:2}}>
           <span/><span>Nombre</span><span>Canción</span><span>Artista</span><span style={{textAlign:'center'}}>YT</span><span/>
         </div>
 
@@ -272,7 +275,7 @@ export default function App() {
           const nc=NC[row.nombre]||NC['']
           return (
             <div key={row.id} style={{background:isCurrent?'rgba(140,74,90,0.06)':'transparent',borderRadius:isCurrent?10:0,opacity:row.done?0.4:1,transition:'opacity 0.2s',overflow:'hidden',width:'100%',maxWidth:'100%',boxSizing:'border-box'}}>
-              <div onClick={()=>setExpandedId(p=>p===row.id?null:row.id)} style={{display:'grid',gridTemplateColumns:GRID,gap:12,padding:`14px ${G}px`,minHeight:'60px',alignItems:'center',cursor:'pointer'}}>
+              <div onClick={()=>setExpandedId(p=>p===row.id?null:row.id)} style={{display:'grid',gridTemplateColumns:GRID,gap:GAP,padding:`14px ${G}px`,minHeight:'60px',alignItems:'center',cursor:'pointer'}}>
                 <button onClick={e=>handleDelete(e,row.id)}
                   onMouseEnter={e=>{e.currentTarget.style.color='#c03050'}}
                   onMouseLeave={e=>{e.currentTarget.style.color='rgba(140,74,90,0.28)'}}
