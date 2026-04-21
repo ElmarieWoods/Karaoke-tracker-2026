@@ -169,7 +169,7 @@ export default function App() {
   const lbT = {color:'#8c4a5a',fontSize:'13px',fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase'}
 
   return (
-    <div style={{minHeight:'100vh',background:'#f7dde0',paddingBottom:120,position:'relative',overflowX:'hidden',fontFamily:"'Lato',sans-serif",color:'#3d1f28'}}>
+    <div style={{minHeight:'100vh',minHeight:'100dvh',background:'#f7dde0',paddingBottom:120,position:'relative',overflowX:'hidden',fontFamily:"'Lato',sans-serif",color:'#3d1f28'}}>
       {['top-left','top-right','bottom-left','bottom-right'].map(pos=><FlowerCorner key={pos} pos={pos}/>)}
 
       <div style={{position:'relative',zIndex:1,maxWidth:680,margin:'0 auto'}}>
