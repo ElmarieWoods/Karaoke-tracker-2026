@@ -122,7 +122,7 @@ function AddModal({ onClose, onAdd }) {
           <div style={{width:36,height:4,borderRadius:99,background:'rgba(140,74,90,0.3)',margin:'0 auto'}}/>
         </div>
         <div style={{padding:'8px 24px 14px',flexShrink:0,borderBottom:'1px solid rgba(140,74,90,0.1)'}}>
-          <h2 style={{fontFamily:"'Playfair Display',serif",color:'#5e1e2e',fontSize:'22px',fontWeight:700,textAlign:'center'}}>Add a Song 🎤</h2>
+          <h2 style={{fontFamily:"'Playfair Display',serif",color:'#5e1e2e',fontSize:'22px',fontWeight:700,textAlign:'center'}}>Añada una canción 🎤</h2>
         </div>
         <div style={{overflowY:'auto',overflowX:'hidden',flex:1,padding:'20px 24px 48px',WebkitOverflowScrolling:'touch',boxSizing:'border-box',width:'100%'}}>
           {/* 🔧 FIX: outer flex column now has width:100%, minWidth:0, box-sizing */}
