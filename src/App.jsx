@@ -90,9 +90,30 @@ function AddModal({ onClose, onAdd }) {
   const nombre = selected.join(' + ')
   const submit = () => { if (!selected.length) return; onAdd({id:nextId++,nombre,cancion,artista,yt,done:false}); onClose() }
 
-  const inS = { width:'100%',padding:'13px 16px',borderRadius:12,border:'1.5px solid rgba(140,74,90,0.25)',background:'rgba(255,255,255,0.75)',color:'#3d1f28',fontSize:'17px',minHeight:'48px',fontFamily:"'Lato',sans-serif",boxSizing:'border-box' }
+  // 🔧 FIX: added maxWidth, WebkitAppearance/appearance reset, outline, margin, display block
+  const inS = {
+    width:'100%',
+    maxWidth:'100%',
+    padding:'13px 16px',
+    borderRadius:12,
+    border:'1.5px solid rgba(140,74,90,0.25)',
+    background:'rgba(255,255,255,0.75)',
+    color:'#3d1f28',
+    fontSize:'17px',
+    minHeight:'48px',
+    fontFamily:"'Lato',sans-serif",
+    boxSizing:'border-box',
+    WebkitAppearance:'none',
+    appearance:'none',
+    outline:'none',
+    margin:0,
+    display:'block'
+  }
   const lbS = { color:'#8c4a5a',fontSize:'13px',fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase' }
   const btn = { flex:1,minHeight:'50px',borderRadius:12,fontSize:'17px',fontWeight:600,cursor:'pointer',fontFamily:"'Lato',sans-serif" }
+
+  // 🔧 FIX: shared style for the flex column wrappers around each input — width:100%, minWidth:0, box-sizing
+  const fieldWrap = { display:'flex',flexDirection:'column',gap:6,width:'100%',minWidth:0,boxSizing:'border-box' }
 
   return (
     <div onClick={onClose} style={{position:'fixed',inset:0,zIndex:100,background:'rgba(50,15,22,0.28)',backdropFilter:'blur(5px)',display:'flex',alignItems:'flex-end',justifyContent:'center'}}>
@@ -104,8 +125,9 @@ function AddModal({ onClose, onAdd }) {
           <h2 style={{fontFamily:"'Playfair Display',serif",color:'#5e1e2e',fontSize:'22px',fontWeight:700,textAlign:'center'}}>Add a Song 🎤</h2>
         </div>
         <div style={{overflowY:'auto',overflowX:'hidden',flex:1,padding:'20px 24px 48px',WebkitOverflowScrolling:'touch',boxSizing:'border-box',width:'100%'}}>
-          <div style={{display:'flex',flexDirection:'column',gap:16}}>
-            <div style={{display:'flex',flexDirection:'column',gap:10}}>
+          {/* 🔧 FIX: outer flex column now has width:100%, minWidth:0, box-sizing */}
+          <div style={{display:'flex',flexDirection:'column',gap:16,width:'100%',minWidth:0,boxSizing:'border-box'}}>
+            <div style={fieldWrap}>
               <span style={lbS}>Who's singing?</span>
               <div style={{display:'flex',flexWrap:'wrap',gap:8}}>
                 {NAMES.map(name => {
@@ -115,15 +137,15 @@ function AddModal({ onClose, onAdd }) {
               </div>
               {selected.length > 0 && <div style={{fontSize:'14px',color:'#8c4a5a',fontStyle:'italic'}}>Singing: {nombre}</div>}
             </div>
-            <div style={{display:'flex',flexDirection:'column',gap:6}}>
+            <div style={fieldWrap}>
               <span style={lbS}>Canción</span>
               <input autoFocus value={cancion} onChange={e=>setCancion(e.target.value)} onKeyDown={e=>e.key==='Enter'&&submit()} placeholder="Nombre de la canción…" style={inS}/>
             </div>
-            <div style={{display:'flex',flexDirection:'column',gap:6}}>
+            <div style={fieldWrap}>
               <span style={lbS}>Artista</span>
               <input value={artista} onChange={e=>setArtista(e.target.value)} placeholder="Nombre del artista…" style={inS}/>
             </div>
-            <div style={{display:'flex',flexDirection:'column',gap:6}}>
+            <div style={fieldWrap}>
               <span style={lbS}>YouTube Link</span>
               <input value={yt} onChange={e=>setYt(e.target.value)} placeholder="https://youtu.be/…" style={inS}/>
             </div>
@@ -150,16 +172,14 @@ export default function App() {
   const doneCount  = rows.filter(r => r.done).length
   const update     = (id,f,v) => setRows(p=>p.map(r=>r.id===id?{...r,[f]:v}:r))
   const toggleDone = id => setRows(p=>p.map(r=>r.id===id?{...r,done:!r.done}:r))
-  const deleteRow  = id => { setRows(p=>p.filter(r=>r.id!==id)); setConfirmDel(null); if(expandedId===id) setExpandedId(null) }
+  const deleteRow  = id => { setRows(p=>p.filter(r=>r.id!==id)); if(expandedId===id) setExpandedId(null) }
   const addRow     = row => setRows(p=>[...p,row])
 
   const shuffleRows = () => {
     setRows(prev => {
-      // Separate done and undone rows
       const done   = prev.filter(r => r.done)
       const undone = prev.filter(r => !r.done)
 
-      // Smart shuffle: no same nombre back-to-back
       const shuffle = arr => {
         const a = [...arr]
         for (let i = a.length - 1; i > 0; i--) {
@@ -192,8 +212,32 @@ export default function App() {
 
   const G = 16
   const GRID = '32px auto 1fr 1fr 44px 44px'
-  const fieldS = {width:'100%',padding:'12px 14px',borderRadius:10,border:'1.5px solid rgba(140,74,90,0.2)',background:'rgba(255,255,255,0.6)',color:'#3d1f28',fontSize:'17px',lineHeight:1.5,minHeight:'48px',fontFamily:"'Lato',sans-serif"}
+
+  // 🔧 FIX: fieldS now has maxWidth, WebkitAppearance/appearance reset, outline, margin, display block, resize
+  const fieldS = {
+    width:'100%',
+    maxWidth:'100%',
+    padding:'12px 14px',
+    borderRadius:10,
+    border:'1.5px solid rgba(140,74,90,0.2)',
+    background:'rgba(255,255,255,0.6)',
+    color:'#3d1f28',
+    fontSize:'17px',
+    lineHeight:1.5,
+    minHeight:'48px',
+    fontFamily:"'Lato',sans-serif",
+    boxSizing:'border-box',
+    WebkitAppearance:'none',
+    appearance:'none',
+    outline:'none',
+    margin:0,
+    display:'block',
+    resize:'vertical'
+  }
   const lbT = {color:'#8c4a5a',fontSize:'13px',fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase'}
+
+  // 🔧 FIX: shared wrapper for row-expansion fields — adds minWidth:0
+  const rowFieldWrap = {display:'flex',flexDirection:'column',gap:6,width:'100%',maxWidth:'100%',minWidth:0,boxSizing:'border-box'}
 
   return (
     <div style={{minHeight:'100vh',minHeight:'100dvh',background:'#f7dde0',paddingBottom:120,position:'relative',overflowX:'hidden',fontFamily:"'Lato',sans-serif",color:'#3d1f28'}}>
@@ -246,10 +290,11 @@ export default function App() {
               <div style={{height:1,background:'rgba(140,74,90,0.1)',margin:`0 ${G}px`}}/>
               {isExpanded&&(
                 <div onClick={e=>e.stopPropagation()} style={{padding:`16px ${G}px 20px`,background:'rgba(255,255,255,0.3)',boxSizing:'border-box',width:'100%',maxWidth:'100%',overflow:'hidden',WebkitOverflowScrolling:'touch'}}>
-                  <div style={{display:'flex',flexDirection:'column',gap:14,width:'100%',maxWidth:'100%',boxSizing:'border-box'}}>
-                    <label style={{display:'flex',flexDirection:'column',gap:6,width:'100%',maxWidth:'100%',boxSizing:'border-box'}}><span style={lbT}>🎵 Canción</span><textarea autoFocus value={row.cancion} onChange={e=>update(row.id,'cancion',e.target.value)} placeholder="Nombre de la canción…" rows={2} style={fieldS}/></label>
-                    <label style={{display:'flex',flexDirection:'column',gap:6,width:'100%',maxWidth:'100%',boxSizing:'border-box'}}><span style={lbT}>🎤 Artista</span><textarea value={row.artista} onChange={e=>update(row.id,'artista',e.target.value)} placeholder="Nombre del artista…" rows={2} style={fieldS}/></label>
-                    <label style={{display:'flex',flexDirection:'column',gap:6,width:'100%',maxWidth:'100%',boxSizing:'border-box'}}><span style={lbT}>🔗 YouTube Link</span><input value={row.yt} onChange={e=>update(row.id,'yt',e.target.value)} placeholder="https://youtu.be/…" style={fieldS}/></label>
+                  {/* 🔧 FIX: inner flex column has minWidth:0 so inputs can shrink */}
+                  <div style={{display:'flex',flexDirection:'column',gap:14,width:'100%',maxWidth:'100%',minWidth:0,boxSizing:'border-box'}}>
+                    <label style={rowFieldWrap}><span style={lbT}>🎵 Canción</span><textarea autoFocus value={row.cancion} onChange={e=>update(row.id,'cancion',e.target.value)} placeholder="Nombre de la canción…" rows={2} style={fieldS}/></label>
+                    <label style={rowFieldWrap}><span style={lbT}>🎤 Artista</span><textarea value={row.artista} onChange={e=>update(row.id,'artista',e.target.value)} placeholder="Nombre del artista…" rows={2} style={fieldS}/></label>
+                    <label style={rowFieldWrap}><span style={lbT}>🔗 YouTube Link</span><input value={row.yt} onChange={e=>update(row.id,'yt',e.target.value)} placeholder="https://youtu.be/…" style={fieldS}/></label>
                     <div style={{display:'flex',gap:10,marginTop:4}}>
                       <button onClick={()=>setExpandedId(null)} style={{flex:1,minHeight:'50px',borderRadius:10,border:'1.5px solid rgba(140,74,90,0.25)',background:'transparent',color:'#8c4a5a',fontSize:'17px',fontWeight:600,cursor:'pointer',fontFamily:"'Lato',sans-serif"}}>Close</button>
                       <button onClick={()=>{toggleDone(row.id);setExpandedId(null)}} style={{flex:1,minHeight:'50px',borderRadius:10,border:`1.5px solid ${row.done?'#5a8e62':'rgba(90,142,98,0.4)'}`,background:row.done?'rgba(90,142,98,0.12)':'transparent',color:row.done?'#2e6635':'#3a6e42',fontSize:'17px',fontWeight:600,cursor:'pointer',fontFamily:"'Lato',sans-serif"}}>{row.done?'↩ Unmark':'Mark as sung 🎤'}</button>
@@ -269,11 +314,11 @@ export default function App() {
       </div>
 
       {/* FAB — hide when a row is expanded */}
-      <div style={{position:'fixed',bottom:50,left:0,right:0,display:'flex',justifyContent:'center',zIndex:50,pointerEvents:'none',opacity:expandedId?0:1,transition:'opacity 0.2s',visibility:expandedId?'hidden':'visible'}}>
+      <div style={{position:'fixed',bottom:50,left:0,right:0,display:'flex',justifyContent:'center',zIndex:50,pointerEvents:expandedId?'none':'auto',opacity:expandedId?0:1,transition:'opacity 0.2s',visibility:expandedId?'hidden':'visible'}}>
         <button onClick={()=>setShowAdd(true)}
           onMouseEnter={e=>e.currentTarget.style.transform='scale(1.1)'}
           onMouseLeave={e=>e.currentTarget.style.transform='scale(1)'}
-          style={{pointerEvents:'all',width:56,height:56,borderRadius:'50%',border:'none',background:'#8c4a5a',color:'#f7dde0',fontSize:'28px',lineHeight:1,cursor:'pointer',boxShadow:'0 4px 20px rgba(140,74,90,0.38)',display:'flex',alignItems:'center',justifyContent:'center',transition:'transform 0.2s'}}>+</button>
+          style={{width:56,height:56,borderRadius:'50%',border:'none',background:'#8c4a5a',color:'#f7dde0',fontSize:'28px',lineHeight:1,cursor:'pointer',boxShadow:'0 4px 20px rgba(140,74,90,0.38)',display:'flex',alignItems:'center',justifyContent:'center',transition:'transform 0.2s'}}>+</button>
       </div>
 
       {showAdd&&<AddModal onClose={()=>setShowAdd(false)} onAdd={addRow}/>}
