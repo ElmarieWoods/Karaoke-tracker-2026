@@ -146,12 +146,12 @@ function AddModal({ onClose, onAdd }) {
               <input value={artista} onChange={e=>setArtista(e.target.value)} placeholder="Nombre del artista…" style={inS}/>
             </div>
             <div style={fieldWrap}>
-              <span style={lbS}>YouTube Link</span>
+              <span style={lbS}>YouTube Enlace</span>
               <input value={yt} onChange={e=>setYt(e.target.value)} placeholder="https://youtu.be/…" style={inS}/>
             </div>
             <div style={{display:'flex',gap:10,marginTop:4}}>
-              <button onClick={onClose} style={{...btn,border:'1.5px solid rgba(140,74,90,0.28)',background:'transparent',color:'#8c4a5a'}}>Cancel</button>
-              <button onClick={submit} style={{...btn,flex:2,border:'none',background:selected.length?'#8c4a5a':'rgba(140,74,90,0.3)',color:'#f7dde0',cursor:selected.length?'pointer':'not-allowed',boxShadow:selected.length?'0 4px 14px rgba(140,74,90,0.3)':'none'}}>Add to Playlist ✦</button>
+              <button onClick={onClose} style={{...btn,border:'1.5px solid rgba(140,74,90,0.28)',background:'transparent',color:'#8c4a5a'}}>Cancelar</button>
+              <button onClick={submit} style={{...btn,flex:2,border:'none',background:selected.length?'#8c4a5a':'rgba(140,74,90,0.3)',color:'#f7dde0',cursor:selected.length?'pointer':'not-allowed',boxShadow:selected.length?'0 4px 14px rgba(140,74,90,0.3)':'none'}}>Añadir a lista ✦</button>
             </div>
           </div>
         </div>
