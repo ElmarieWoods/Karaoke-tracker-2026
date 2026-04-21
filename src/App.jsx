@@ -199,7 +199,7 @@ export default function App() {
     <div style={{minHeight:'100vh',minHeight:'100dvh',background:'#f7dde0',paddingBottom:120,position:'relative',overflowX:'hidden',fontFamily:"'Lato',sans-serif",color:'#3d1f28'}}>
       {['top-left','top-right','bottom-left','bottom-right'].map(pos=><FlowerCorner key={pos} pos={pos}/>)}
 
-      <div style={{position:'relative',zIndex:1,maxWidth:680,margin:'0 auto'}}>
+      <div style={{position:'relative',zIndex:1,maxWidth:680,margin:'0 auto',overflow:'hidden'}}>
         {/* Header */}
         <div style={{textAlign:'center',padding:`48px ${G}px 28px`}}>
           <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:'clamp(2.2rem,9vw,3.2rem)',fontWeight:700,color:'#5e1e2e',letterSpacing:'0.05em',lineHeight:1.1,textTransform:'uppercase'}}>Girl's<br/>Weekend</h1>
@@ -227,7 +227,7 @@ export default function App() {
           const isCurrent=idx===currentIdx, isExpanded=expandedId===row.id
           const nc=NC[row.nombre]||NC['']
           return (
-            <div key={row.id} style={{background:isCurrent?'rgba(140,74,90,0.06)':'transparent',borderRadius:isCurrent?10:0,opacity:row.done?0.4:1,transition:'opacity 0.2s'}}>
+            <div key={row.id} style={{background:isCurrent?'rgba(140,74,90,0.06)':'transparent',borderRadius:isCurrent?10:0,opacity:row.done?0.4:1,transition:'opacity 0.2s',overflow:'hidden',width:'100%'}}>
               <div onClick={()=>setExpandedId(p=>p===row.id?null:row.id)} style={{display:'grid',gridTemplateColumns:GRID,gap:12,padding:`14px ${G}px`,minHeight:'60px',alignItems:'center',cursor:'pointer'}}>
                 <button onClick={e=>handleDelete(e,row.id)}
                   onMouseEnter={e=>{e.currentTarget.style.color='#c03050'}}
@@ -245,7 +245,7 @@ export default function App() {
               </div>
               <div style={{height:1,background:'rgba(140,74,90,0.1)',margin:`0 ${G}px`}}/>
               {isExpanded&&(
-                <div onClick={e=>e.stopPropagation()} style={{padding:`16px ${G}px 20px`,background:'rgba(255,255,255,0.3)',overflow:'hidden',boxSizing:'border-box',width:'100%'}}>
+                <div onClick={e=>e.stopPropagation()} style={{padding:`16px ${G}px 20px`,background:'rgba(255,255,255,0.3)',overflow:'hidden',boxSizing:'border-box',width:'100%',maxWidth:'100%',contain:'layout'}}>
                   <div style={{display:'flex',flexDirection:'column',gap:14,overflowX:'hidden',width:'100%'}}>
                     <label style={{display:'flex',flexDirection:'column',gap:6}}><span style={lbT}>🎵 Canción</span><textarea autoFocus value={row.cancion} onChange={e=>update(row.id,'cancion',e.target.value)} placeholder="Nombre de la canción…" rows={2} style={fieldS}/></label>
                     <label style={{display:'flex',flexDirection:'column',gap:6}}><span style={lbT}>🎤 Artista</span><textarea value={row.artista} onChange={e=>update(row.id,'artista',e.target.value)} placeholder="Nombre del artista…" rows={2} style={fieldS}/></label>
