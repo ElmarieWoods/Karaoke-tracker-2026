@@ -292,7 +292,7 @@ export default function App() {
       <div style={{position:'relative',zIndex:1,maxWidth:680,margin:'0 auto',overflow:'hidden'}}>
         {/* Header */}
         <div style={{textAlign:'center',padding:`48px ${G}px 28px`}}>
-          <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:'clamp(2.2rem,9vw,3.2rem)',fontWeight:700,color:'#5e1e2e',letterSpacing:'0.05em',lineHeight:1.1,textTransform:'uppercase'}}>Karaoke</br>Time/h1>
+          <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:'clamp(2.2rem,9vw,3.2rem)',fontWeight:700,color:'#5e1e2e',letterSpacing:'0.05em',lineHeight:1.1,textTransform:'uppercase'}}>Karaoke<br/>Time</h1>
           <div style={{display:'inline-block',marginTop:16,padding:'10px 36px',borderRadius:5,background:'#8c4a5a',color:'#f7dde0',fontFamily:"'Playfair Display',serif",fontSize:'17px',fontStyle:'italic',fontWeight:700}}>Houston Girls Trip 🤠</div>
           <div style={{marginTop:22,padding:`0 ${G}px`}}>
             <div style={{display:'flex',justifyContent:'space-between',color:'#6a2a38',fontSize:'15px',fontWeight:600,fontStyle:'italic',marginBottom:7}}>
